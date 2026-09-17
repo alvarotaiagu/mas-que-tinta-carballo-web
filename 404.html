@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Página no encontrada · Más que Tinta</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/brand/mqt-marca.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/brand/icon-96.png" type="image/png" sizes="96x96">
+<meta name="theme-color" content="#FBFAF7">
+<meta name="color-scheme" content="light only">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,400;112,500;112,700;112,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=1">
+<style>
+  .p404 {
+    min-height: 100svh; display: grid; place-items: center;
+    padding: var(--gutter);
+    background-image:
+      linear-gradient(to right, rgba(17, 17, 17, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(17, 17, 17, 0.035) 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+  .p404-in { max-width: 44rem; text-align: left; }
+  .p404-in img { width: clamp(11rem, 34vw, 18rem); margin-bottom: 2.2rem; }
+  .p404-in h1 { font-size: clamp(2rem, 6vw, 3.6rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .p404-in p { margin-top: 1.1rem; color: var(--negro-2); }
+  .p404-nivel { margin-top: 2rem; display: flex; align-items: center; gap: 0.9rem; }
+  .p404-nivel span { flex: 1; height: 6px; border-radius: 99px; background: var(--linea-suave); }
+  .p404-nivel em { font-style: normal; font-size: 0.68rem; color: var(--gris); }
+  .p404-btn { margin-top: 2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<main class="p404">
+  <div class="p404-in">
+    <img src="assets/img/brand/mqt-wordmark.svg" alt="Más que Tinta" width="958" height="141">
+    <p class="etiqueta mono">ERROR 404</p>
+    <h1>Esta página se quedó sin tinta</h1>
+    <p>La dirección que has abierto no existe en esta web. Vuelve al inicio o llámanos: en la tienda te lo decimos en un momento.</p>
+    <div class="p404-nivel" aria-hidden="true">
+      <span></span><em class="mono">C 0%</em>
+    </div>
+    <div class="p404-btn">
+      <a class="btn btn-cian btn-grande" href="./">Volver al inicio</a>
+      <a class="btn btn-linea btn-grande" href="tel:+34981702229">Llamar · 981 70 22 29</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>

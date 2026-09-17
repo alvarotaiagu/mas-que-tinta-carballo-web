@@ -1,0 +1,290 @@
+{
+  "url": "http://127.0.0.1:8247/",
+  "consola": [],
+  "fallos": [],
+  "pruebas": [
+    {
+      "prueba": "la fuente Archivo esta cargada",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "los 4 tanques del hero se llenan a su nivel",
+      "ok": true,
+      "extra": [
+        {
+          "letra": "C",
+          "objetivo": 100,
+          "escala": 100,
+          "pct": "100%"
+        },
+        {
+          "letra": "M",
+          "objetivo": 96,
+          "escala": 96,
+          "pct": "96%"
+        },
+        {
+          "letra": "Y",
+          "objetivo": 99,
+          "escala": 99,
+          "pct": "99%"
+        },
+        {
+          "letra": "K",
+          "objetivo": 94,
+          "escala": 94,
+          "pct": "94%"
+        }
+      ]
+    },
+    {
+      "prueba": "la \"a\" del wordmark se rellena",
+      "ok": true,
+      "extra": {
+        "carga": "inset(38% 0px 0px)"
+      }
+    },
+    {
+      "prueba": "el aviso de cookies se ve al entrar",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "el boton \"Entendido\" cierra el aviso",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "la marquesina mide mas de dos pantallas",
+      "ok": true,
+      "extra": {
+        "ancho": 3527,
+        "ventana": 1440
+      }
+    },
+    {
+      "prueba": "la primera tinta ya ha barrido el fondo",
+      "ok": true,
+      "extra": {
+        "capa0": "inset(0px 0% 0px 0px)"
+      }
+    },
+    {
+      "prueba": "la ultima tinta (amarillo) ha barrido al llegar la tarjeta 06",
+      "ok": true,
+      "extra": {
+        "capa5": "inset(0px 0% 0px 0px)",
+        "tarjetas": 6
+      }
+    },
+    {
+      "prueba": "los depositos de las tarjetas estan llenos",
+      "ok": true,
+      "extra": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ]
+    },
+    {
+      "prueba": "el buscador contesta que es una maqueta",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "la barra de nivel de Reparacion llega al 100 %",
+      "ok": true,
+      "extra": {
+        "escala": 100,
+        "texto": "M 100%"
+      }
+    },
+    {
+      "prueba": "las 12 franjas del horario estan pintadas",
+      "ok": true,
+      "extra": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ]
+    },
+    {
+      "prueba": "el eje de horas cae sobre la misma columna que las franjas",
+      "ok": true,
+      "extra": {
+        "pista": [
+          265,
+          1135
+        ],
+        "eje": [
+          265,
+          1135
+        ]
+      }
+    },
+    {
+      "prueba": "el contador termina en los datos reales 4,7 y 36",
+      "ok": true,
+      "extra": {
+        "nota": "4,7",
+        "n": "36"
+      }
+    },
+    {
+      "prueba": "NO hay iframe de Google antes de pedirlo",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "el mapa se monta al pulsar, sin API key",
+      "ok": true,
+      "extra": {
+        "src": "https://www.google.com/maps?q=M%C3%A1s%20que%20Tinta%2C%20R%C3%BAa%20Luis%20Calvo%206%2C%2015102%20Carballo%2C%20A%20Coru%C3%B1a&output=embed"
+      }
+    },
+    {
+      "prueba": "sin scroll horizontal a 1440 px",
+      "ok": true,
+      "extra": {
+        "sobra": 0
+      }
+    },
+    {
+      "prueba": "a 400 px siguen estando las cuatro barras",
+      "ok": true,
+      "extra": {
+        "n": 4,
+        "anchos": [
+          80,
+          80,
+          80,
+          80
+        ]
+      }
+    },
+    {
+      "prueba": "sin scroll horizontal a 400 px",
+      "ok": true,
+      "extra": {
+        "sobra": 0
+      }
+    },
+    {
+      "prueba": "el menu movil se abre",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "el menu movil se cierra al elegir",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "sin movimiento no se enciende has-motion",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "con movimiento reducido los depositos ya estan llenos",
+      "ok": true,
+      "extra": [
+        {
+          "escala": 100,
+          "pct": "100%"
+        },
+        {
+          "escala": 100,
+          "pct": "96%"
+        },
+        {
+          "escala": 100,
+          "pct": "99%"
+        },
+        {
+          "escala": 100,
+          "pct": "94%"
+        }
+      ]
+    },
+    {
+      "prueba": "con movimiento reducido los porcentajes siguen siendo su dato",
+      "ok": true,
+      "extra": [
+        "100%",
+        "96%",
+        "99%",
+        "94%"
+      ]
+    },
+    {
+      "prueba": "con movimiento reducido los niveles de seccion marcan 100 %",
+      "ok": true,
+      "extra": [
+        "C 100%",
+        "C 100%",
+        "M 100%",
+        "Y 100%",
+        "K 100%",
+        "C 100%",
+        "M 100%"
+      ]
+    },
+    {
+      "prueba": "con movimiento reducido no hay barrido (todas las tintas puestas)",
+      "ok": true,
+      "extra": [
+        "inset(0px)",
+        "inset(0px)",
+        "inset(0px)",
+        "inset(0px)",
+        "inset(0px)",
+        "inset(0px)"
+      ]
+    },
+    {
+      "prueba": "con movimiento reducido el contenido no se pierde (4,7 y 36)",
+      "ok": true,
+      "extra": {
+        "nota": "4,7",
+        "resenas": "36"
+      }
+    },
+    {
+      "prueba": "con movimiento reducido las franjas del horario estan pintadas",
+      "ok": true,
+      "extra": null
+    },
+    {
+      "prueba": "si el CDN falla la marca y el telefono siguen visibles",
+      "ok": true,
+      "extra": {
+        "marca": "1",
+        "tel": "tel:+34981702229",
+        "tanque": 100
+      }
+    },
+    {
+      "prueba": "sin errores de consola",
+      "ok": true,
+      "extra": []
+    },
+    {
+      "prueba": "sin recursos 404",
+      "ok": true,
+      "extra": []
+    }
+  ]
+}

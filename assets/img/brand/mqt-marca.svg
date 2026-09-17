@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Más que Tinta">
+  <title>Más que Tinta</title>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="9" fill="#FBFAF7" stroke="#111111" stroke-width="3"/>
+  <rect x="11.0" y="13.0" width="7.5" height="38.0" rx="2.4" fill="#111111" opacity="0.13"/>
+  <rect x="11.0" y="22.9" width="7.5" height="28.1" rx="2.4" fill="#00A9E0"/>
+  <rect x="22.5" y="13.0" width="7.5" height="38.0" rx="2.4" fill="#111111" opacity="0.13"/>
+  <rect x="22.5" y="31.2" width="7.5" height="19.8" rx="2.4" fill="#E5007D"/>
+  <rect x="34.0" y="13.0" width="7.5" height="38.0" rx="2.4" fill="#111111" opacity="0.13"/>
+  <rect x="34.0" y="17.6" width="7.5" height="33.4" rx="2.4" fill="#FFD500"/>
+  <rect x="45.5" y="13.0" width="7.5" height="38.0" rx="2.4" fill="#111111" opacity="0.13"/>
+  <rect x="45.5" y="26.7" width="7.5" height="24.3" rx="2.4" fill="#111111"/>
+</svg>
