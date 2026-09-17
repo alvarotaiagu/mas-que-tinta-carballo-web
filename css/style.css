@@ -120,6 +120,47 @@ a:hover { text-decoration-color: currentColor; }
 }
 .cookie-ack:hover { background: var(--papel); }
 
+/* ---------- Cortina de entrada (preloader) ----------
+   La pasada de impresion a cuatro tintas: la tira de registro se entinta
+   cian, magenta, amarillo y negro por ese orden, sube el wordmark y
+   despues la hoja sale en CUATRO BANDAS que se van ALTERNANDO LADO, como
+   cuatro planchas que se separan.
+   A proposito no llena ningun deposito: eso ya lo hacen los tanques del
+   hero y repetirlo restaria.
+   El panel no lleva fondo propio; el papel lo ponen las bandas, o al
+   salir se destaparia el panel en vez de la pagina.
+   Ojo: .cortina usa display:grid, asi que [hidden] necesita su regla. */
+.cortina { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; overflow: hidden; }
+.cortina[hidden] { display: none; }
+html.cortina-puesta { overflow: hidden; }
+
+.cortina-bandas { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.cortina-banda { flex: 1 1 0; background: var(--papel); position: relative; will-change: transform; }
+/* el filo de color de cada plancha: apenas 3 px, pero es lo que convierte
+   cuatro bandas de papel en cuatro tintas */
+.cortina-banda::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; }
+.cortina-banda--cian::after { background: var(--cian); }
+.cortina-banda--magenta::after { background: var(--magenta); }
+.cortina-banda--amarillo::after { background: var(--amarillo); }
+.cortina-banda--negro::after { background: var(--negro); }
+
+.cortina-centro { position: relative; display: grid; justify-items: center; gap: 1.1rem; padding: 0 1.5rem; text-align: center; }
+.cortina-wordmark { width: min(64vw, 27rem); height: auto; }
+.cortina-tira { display: flex; gap: 6px; }
+.cortina-registro { width: clamp(28px, 5vw, 44px); height: 6px; border-radius: 1px; transform-origin: 0% 50%; }
+.cortina-registro--cian { background: var(--cian); }
+.cortina-registro--magenta { background: var(--magenta); }
+.cortina-registro--amarillo { background: var(--amarillo); }
+.cortina-registro--negro { background: var(--negro); }
+.cortina-pie { font-size: .68rem; font-weight: 700; letter-spacing: .34em; text-transform: uppercase; color: var(--gris); }
+
+html.has-motion .cortina-wordmark { opacity: 0; }
+html.has-motion .cortina-registro { transform: scaleX(0); }
+html.has-motion .cortina-pie { opacity: 0; }
+
+/* con movimiento reducido no debe verse ni un fotograma */
+@media (prefers-reduced-motion: reduce) { .cortina { display: none; } }
+
 /* ---------- Cabecera ---------- */
 .cabecera {
   position: fixed; top: 0; left: 0; right: 0; z-index: 150;

@@ -72,10 +72,35 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,400;112,500;112,600;112,700;112,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=1">
+<!-- Sin JavaScript no hay quien saque la hoja: mejor no ensenarla. -->
+<noscript><style>.cortina { display: none !important; }</style></noscript>
 </head>
 <body>
 
 <a class="saltar" href="#tienda">Saltar al contenido</a>
+
+<!-- Cortina de entrada: la pasada de impresion a cuatro tintas. Se retira
+     SIEMPRE desde js/main.js; el script de abajo es la red de seguridad
+     por si main.js no llega a cargarse. -->
+<div class="cortina" data-cortina aria-hidden="true">
+  <div class="cortina-bandas" aria-hidden="true">
+    <span class="cortina-banda cortina-banda--cian"></span>
+    <span class="cortina-banda cortina-banda--magenta"></span>
+    <span class="cortina-banda cortina-banda--amarillo"></span>
+    <span class="cortina-banda cortina-banda--negro"></span>
+  </div>
+  <div class="cortina-centro">
+    <img class="cortina-wordmark" src="assets/img/brand/mqt-wordmark.svg" alt="" width="958" height="141">
+    <span class="cortina-tira" aria-hidden="true">
+      <i class="cortina-registro cortina-registro--cian"></i>
+      <i class="cortina-registro cortina-registro--magenta"></i>
+      <i class="cortina-registro cortina-registro--amarillo"></i>
+      <i class="cortina-registro cortina-registro--negro"></i>
+    </span>
+    <p class="cortina-pie">Carballo</p>
+  </div>
+</div>
+<script>setTimeout(function(){var c=document.querySelector('[data-cortina]');if(c&&!c.hidden){c.hidden=true;document.documentElement.classList.remove('cortina-puesta');}},6000);</script>
 
 <div class="cookie-banner" hidden>
   <p>Esta web no usa cookies de terceros. Solo guardamos en tu navegador que ya viste este aviso; el mapa de Google se carga únicamente si lo pides tú.</p>

@@ -370,7 +370,10 @@
       return;
     }
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" }, paused: true });
+    /* el hero no se entinta hasta que salen las planchas: lo primero que
+       se ve de la pagina ya esta en movimiento */
+    cortina.alAbrirse(() => tl.play());
     tl.to(".hero-texto > .etiqueta", { opacity: 1, duration: 0.5 }, 0);
 
     tanques.forEach((t, i) => {
@@ -551,6 +554,77 @@
       });
     });
   }
+
+
+  /* ---------- Cortina de entrada (preloader) ----------
+     Gesto propio: la pasada de impresion a cuatro tintas. La tira de
+     registro se entinta C, M, Y, K por ese orden, sube el wordmark y la
+     hoja sale en cuatro bandas que se van ALTERNANDO LADO, como cuatro
+     planchas separandose. No llena ningun deposito a proposito: eso ya lo
+     hacen los tanques del hero.
+
+     Dos momentos distintos:
+       · alAbrirse(fn) → cuando las bandas EMPIEZAN a salir, para que el
+         hero ya se este entintando cuando asoma la pagina.
+       · retirar()     → al terminar: quita el nodo, devuelve el scroll y
+         refresca ScrollTrigger, que midio con overflow:hidden.
+
+     `lenis` se declara con let mas abajo, asi que en el camino sincrono
+     (sin GSAP) hay que retirar SIN tocarlo: leerlo antes de su linea es
+     un error de zona muerta. De ahi el parametro `sinLenis`. */
+  const cortina = (function initCortina() {
+    const el = $("[data-cortina]");
+    const espera = [];
+    let abierta = false;
+    let fuera = false;
+
+    function abrir() {
+      if (abierta) return;
+      abierta = true;
+      espera.splice(0).forEach((fn) => { try { fn(); } catch (e) {} });
+    }
+    function retirar(sinLenis) {
+      abrir();
+      if (fuera) return;
+      fuera = true;
+      if (el) el.hidden = true;
+      html.classList.remove("cortina-puesta");
+      if (!sinLenis && lenis) lenis.start();
+      if (gsapReady) ScrollTrigger.refresh();
+    }
+
+    const api = { alAbrirse: (fn) => (abierta ? fn() : espera.push(fn)) };
+    if (!el || !motion) { retirar(true); return api; }
+
+    html.classList.add("cortina-puesta");
+
+    const centro = $(".cortina-centro", el);
+    const wordmark = $(".cortina-wordmark", el);
+    const registros = $$(".cortina-registro", el);
+    const pie = $(".cortina-pie", el);
+    const bandas = $$(".cortina-banda", el);
+    const SALE = 1.35;
+
+    const tl = gsap.timeline({ onComplete: () => retirar(false) });
+    if (wordmark) tl.to(wordmark, { opacity: 1, duration: 0.75, ease: "power2.out" }, 0.1);
+    if (registros.length) tl.to(registros, { scaleX: 1, duration: 0.28, stagger: 0.16, ease: "power2.out" }, 0.4);
+    if (pie) tl.to(pie, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.95);
+
+    tl.add(abrir, SALE);
+    if (centro) tl.to(centro, { opacity: 0, duration: 0.32, ease: "power2.in" }, SALE);
+    bandas.forEach((b, i) => {
+      /* alternando lado: plancha que sale a la izquierda, plancha que sale
+         a la derecha. Cada una se va la ventana entera de ancho. */
+      tl.to(b, {
+        xPercent: i % 2 === 0 ? -105 : 105,
+        duration: 0.95,
+        ease: "expo.inOut"
+      }, SALE + 0.08 + i * 0.075);
+    });
+
+    setTimeout(() => retirar(false), 5200);
+    return api;
+  })();
 
   /* ---------- Lenis ---------- */
   let lenis = null;
