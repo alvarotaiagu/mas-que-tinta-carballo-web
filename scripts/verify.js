@@ -8,8 +8,9 @@
    pulsar el mapa (y que si lo hay despues), el llenado de los cuatro
    depositos del hero, el barrido de tinta de la pila pegajosa, la barra
    de nivel de cada seccion, el buscador-maqueta, el menu movil, el
-   desbordamiento horizontal a 400 px y la variante de movimiento
-   reducido (niveles ya llenos, sin barrido).
+   desbordamiento horizontal a 400 px, la variante de movimiento
+   reducido (niveles ya llenos, sin barrido) y que la pila pegajosa se
+   suelta entera, sin que ninguna tarjeta asome por detras.
 
    Uso: NODE_PATH=/c/Users/alvar/node_modules node scripts/verify.js [url] */
 const { chromium } = require('playwright');
@@ -130,6 +131,51 @@ const escalaX = (page, sel) => page.evaluate((s) => {
   ok('la ultima tinta (amarillo) ha barrido al llegar la tarjeta 06',
     puesta(capa5), { capa5, tarjetas: ultima.length });
   await page.screenshot({ path: path.join(SHOTS, 'v-cats-6.png') });
+
+  /* --- la pila no se deshace al salir ---
+     Un sticky se recorta contra su caja de MARGEN dentro de la caja de
+     contenido del contenedor. Como las seis comparten contenedor, si una
+     tarjeta mide distinto o lleva otro margen se despega antes que el
+     resto y, al irse la pila, asoma la de debajo. Aqui se recorre la
+     seccion entera y se exige el invariante: toda tarjeta que YA se haya
+     pegado tiene que estar exactamente a la misma altura que las demas
+     que ya se pegaron. (Se usa scrollTo a proposito: esto es geometria
+     pura, no depende de ningun ScrollTrigger.) */
+  const pila = await page.evaluate(() => {
+    const cards = Array.from(document.querySelectorAll('.cat'));
+    const tope = parseFloat(getComputedStyle(cards[0]).top);
+    const sec = document.querySelector('.cats').getBoundingClientRect();
+    const desde = sec.top + window.scrollY;
+    const hasta = desde + sec.height + 600;
+    const y0 = window.scrollY;
+    const pegadas = new Set();
+    const fallos = [];
+    let sueltas = new Set();
+    for (let y = desde; y <= hasta; y += 20) {
+      window.scrollTo(0, y);
+      const tops = cards.map((c) => Math.round(c.getBoundingClientRect().top - tope));
+      tops.forEach((t, i) => { if (t <= 1) pegadas.add(i); });
+      const puestas = [...pegadas].map((i) => tops[i]);
+      if (puestas.length > 1 && Math.max(...puestas) - Math.min(...puestas) > 1) {
+        if (fallos.length < 3) fallos.push({ y: Math.round(y), tops });
+      }
+      if (y > desde + 200) tops.forEach((t, i) => { if (pegadas.has(i) && t < -1) sueltas.add(i); });
+    }
+    window.scrollTo(0, y0);
+    return {
+      alturas: cards.map((c) => Math.round(c.getBoundingClientRect().height)),
+      margenes: cards.map((c) => getComputedStyle(c).marginBottom),
+      pegadas: pegadas.size, sueltas: sueltas.size, fallos
+    };
+  });
+  ok('las seis tarjetas llegan a pegarse (tambien la ultima)', pila.pegadas === 6, { pegadas: pila.pegadas });
+  ok('las seis miden lo mismo y llevan el mismo margen',
+    new Set(pila.alturas).size === 1 && new Set(pila.margenes).size === 1,
+    { alturas: pila.alturas, margenes: pila.margenes });
+  ok('la pila se suelta entera: ninguna asoma por detras', pila.fallos.length === 0, pila.fallos);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(600);
+  await rueda(page, await donde(page, '.cat:last-child', 60));
 
   /* --- los depositos de las tarjetas se llenan --- */
   const deps = await page.evaluate(() => Array.from(document.querySelectorAll('.deposito-tinta'))

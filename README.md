@@ -91,7 +91,19 @@ hero, la marquesina y la franja del pie.
 - El barrido de tinta de la pila pegajosa es `clip-path: inset(0 100% 0 0)` →
   `inset(0 0 0 0)` en 0,5 s: un cabezal de impresión cruzando el papel.
 - En la pila pegajosa **el `<li>` es el pegajoso** y su `margin-bottom` es el
-  recorrido; la tarjeta no lleva `min-height` (eso deja tarjetas fantasma).
+  recorrido. Tres detalles que hay que respetar, porque las seis comparten
+  contenedor y un sticky se recorta contra su **caja de margen**:
+  1. las seis llevan **el mismo `margin-bottom`**, la última incluida (con
+     margen 0 se soltaba 234 px después que el resto);
+  2. las seis miden **lo mismo** (`--alto-carta`, que el JS recalcula al
+     cambiar el ancho; por encima de 900 px hay un suelo fijo en CSS como
+     respaldo). Una tarjeta 29 px más alta se despegaba antes y asomaba por
+     detrás al salir la pila;
+  3. el recorrido de la última lo da un **`::after` del contenedor**, del
+     tamaño de un paso completo de la pila. Ni el `padding` del contenedor
+     ni el margen del último hijo sirven, y con un `::after` demasiado corto
+     PuntoPack se veía un tercio de lo que se ve el resto.
+  El `min-height` va en la tarjeta, nunca en el `<li>` (eso deja fantasmas).
 - **Movimiento reducido**: los niveles salen ya llenos y no hay barrido, pero
   el contenido no cambia — los porcentajes, la nota 4,7 y las 36 reseñas se
   pintan igual.
@@ -150,7 +162,7 @@ teclados de marca sobre fondo blanco, que el brief prohíbe expresamente.
 | `node scripts/contact_sheets.js "consulta"…` | hojas de contacto de Pexels para elegir foto |
 | `node scripts/generate_og.js` | imagen 1200×630 para compartir |
 | `node scripts/shots.js <url> <ancho> <etiqueta> <alto>` | capturas por sección |
-| `node scripts/verify.js <url>` | **la verificación**: 31 pruebas |
+| `node scripts/verify.js <url>` | **la verificación**: 34 pruebas |
 
 Los de Node necesitan `NODE_PATH=/c/Users/alvar/node_modules`.
 
@@ -161,11 +173,13 @@ python -m http.server 8247
 NODE_PATH=/c/Users/alvar/node_modules node scripts/verify.js http://127.0.0.1:8247/
 ```
 
-31/31 pruebas. Comprueba, entre otras: que los cuatro depósitos del hero
+34/34 pruebas. Comprueba, entre otras: que los cuatro depósitos del hero
 llegan a su nivel y el porcentaje coincide, que la «á» se rellena, que el
 botón del aviso de cookies **cierra**, que **no hay iframe de Google antes de
 pulsar** y sí después, que el barrido de tinta llega hasta la sexta tarjeta,
-que el eje de horas cae exactamente sobre la columna de las franjas, que los
+que el eje de horas cae exactamente sobre la columna de las franjas, que
+**la pila pegajosa se suelta entera** —las seis tarjetas se pegan, miden lo
+mismo y ninguna asoma por detrás al salir—, que los
 contadores acaban en 4,7 y 36, que a 400 px siguen estando las cuatro barras y
 no hay scroll horizontal, que con movimiento reducido los niveles salen llenos
 **sin perder ni un dato**, y que si el CDN de GSAP cae la marca y el teléfono

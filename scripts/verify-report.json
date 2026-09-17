@@ -79,6 +79,40 @@
       }
     },
     {
+      "prueba": "las seis tarjetas llegan a pegarse (tambien la ultima)",
+      "ok": true,
+      "extra": {
+        "pegadas": 6
+      }
+    },
+    {
+      "prueba": "las seis miden lo mismo y llevan el mismo margen",
+      "ok": true,
+      "extra": {
+        "alturas": [
+          420,
+          420,
+          420,
+          420,
+          420,
+          420
+        ],
+        "margenes": [
+          "234px",
+          "234px",
+          "234px",
+          "234px",
+          "234px",
+          "234px"
+        ]
+      }
+    },
+    {
+      "prueba": "la pila se suelta entera: ninguna asoma por detras",
+      "ok": true,
+      "extra": []
+    },
+    {
       "prueba": "los depositos de las tarjetas estan llenos",
       "ok": true,
       "extra": [

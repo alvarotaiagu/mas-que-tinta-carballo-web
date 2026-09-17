@@ -360,6 +360,21 @@
     });
   }
 
+  /* ---------- Categorías: todas las tarjetas a la misma altura ----------
+     Las seis comparten contenedor pegajoso, así que cada una se suelta
+     cuando el fondo del contenedor sube por encima de "su" altura. Si una
+     mide 29 px más que las otras se despega antes y, al salir la pila, se
+     ve asomar la de debajo. Se mide la más alta y se iguala; se rehace al
+     cambiar el ancho porque el reparto de columnas cambia con él. */
+  function igualaCartas() {
+    const lista = $(".cats-lista");
+    const cartas = $$(".cat-carta");
+    if (!lista || !cartas.length) return;
+    lista.style.setProperty("--alto-carta", "0px");
+    const alto = cartas.reduce((m, c) => Math.max(m, c.getBoundingClientRect().height), 0);
+    lista.style.setProperty("--alto-carta", Math.ceil(alto) + "px");
+  }
+
   /* ---------- Categorías: pila pegajosa + barrido de tinta ----------
      El <li> es el pegajoso y su margin-bottom es el recorrido. El
      disparo de cada barrido se calcula con el mismo `top` pegajoso que
@@ -482,6 +497,7 @@
      Se espera a las fuentes: el reparto por caracteres se mide con
      Archivo, no con la de respaldo, y así el titular no salta. */
   function arranca() {
+    igualaCartas();
     initLenis();
     initHero();
     initTitulares();
@@ -506,6 +522,9 @@
   let t;
   window.addEventListener("resize", () => {
     clearTimeout(t);
-    t = setTimeout(() => { if (gsapReady) ScrollTrigger.refresh(); }, 220);
+    t = setTimeout(() => {
+      igualaCartas();
+      if (gsapReady) ScrollTrigger.refresh();
+    }, 220);
   });
 })();

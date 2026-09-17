@@ -407,20 +407,38 @@ html.has-motion .cats-capa { clip-path: inset(0 100% 0 0); }
 }
 
 .cats-lista {
-  padding-inline: var(--gutter); padding-bottom: clamp(5rem, 12vw, 9rem);
+  padding-inline: var(--gutter); padding-bottom: clamp(1rem, 3vw, 2rem);
   max-width: var(--ancho); margin-inline: auto;
 }
+/* respaldo sin JS: por encima de 900 px un suelo fijo ya iguala las seis */
+@media (min-width: 901px) { .cats-lista { --alto-carta: 28rem; } }
 /* el <li> es el pegajoso; el recorrido lo da su margin-bottom.
-   Nada de min-height aquí: eso deja tarjetas fantasma. */
+   Nada de min-height en el <li>: eso deja tarjetas fantasma. */
 .cat {
   position: sticky;
   top: calc(var(--nav-h) + clamp(0.8rem, 3vh, 2.2rem));
   margin-bottom: clamp(9rem, 26vh, 15rem);
 }
-.cat:last-child { margin-bottom: 0; }
+/* Las seis llevan EL MISMO margin-bottom, incluida la última. No es
+   decorativo: un sticky se recorta contra su caja de MARGEN, así que la
+   tarjeta con margen 0 se soltaba 234 px después que las demás y la pila
+   se deshacía al salir. Mismo alto (arriba) + mismo margen = las seis se
+   sueltan en el mismo píxel de scroll.
+   Y el recorrido de la última lo da este ::after: ni el padding del
+   contenedor ni el margen del último hijo bastan, porque el recorte llega
+   justo hasta ahí. Sin él, la 06 pasa de largo sin llegar a pegarse.
+   Mide UN PASO DE LA PILA (alto de tarjeta + margen), que es lo que dura
+   cada una de las otras en primer plano; con menos, PuntoPack —la única
+   categoría confirmada— se vería un tercio de lo que se ve el resto. */
+.cats-lista::after {
+  content: "";
+  display: block;
+  height: calc(var(--alto-carta, 20rem) + clamp(9rem, 26vh, 15rem));
+}
 
 .cat-carta {
   position: relative; overflow: hidden;
+  min-height: var(--alto-carta, 0px);
   background: var(--papel); border: 2px solid var(--negro); border-radius: var(--r);
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
   gap: clamp(1rem, 2.4vw, 2rem);
