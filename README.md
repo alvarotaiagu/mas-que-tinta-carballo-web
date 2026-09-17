@@ -73,6 +73,7 @@ vea y lo rellene.
 | `#resenas` | cian | 4,7 ★ · 36 reseñas reales; textos vacíos a propósito |
 | `#contacto` | magenta | teléfono, dirección, horario, redes y mapa bajo demanda |
 | `#pendiente` | negro | la lista de arriba, visible en la web |
+| Cartucho fijo | la de la sección | indicador de scroll: se llena con lo leído y cambia de tinta con el mismo barrido de cabezal; pulsarlo sube al principio |
 
 Regla de color: **una sola tinta por sección**. Las cuatro juntas solo en el
 hero, la marquesina y la franja del pie.
@@ -104,9 +105,20 @@ hero, la marquesina y la franja del pie.
      ni el margen del último hijo sirven, y con un `::after` demasiado corto
      PuntoPack se veía un tercio de lo que se ve el resto.
   El `min-height` va en la tarjeta, nunca en el `<li>` (eso deja fantasmas).
+- **Cartucho del scroll** (abajo a la izquierda): el mismo gesto que el resto,
+  un depósito con `transform: scaleY`. Va con **un rAF por evento de scroll**,
+  así que no hay trabajo por frame con la página quieta (medido: 0 long tasks,
+  60 fps). Tres detalles que costaron una iteración: va sobre una **placa de
+  papel** porque cruza secciones cian, magenta, amarilla y negra y el
+  porcentaje en gris no se leía encima; las rayas de nivel van **debajo** de la
+  tinta, porque encima desaparecían con la tinta negra al 80 %; y la
+  superficie lleva una **línea de menisco** posicionada con
+  `top: calc(100% - var(--carga) * 100%)`, que no depende del color de la
+  tinta.
 - **Movimiento reducido**: los niveles salen ya llenos y no hay barrido, pero
-  el contenido no cambia — los porcentajes, la nota 4,7 y las 36 reseñas se
-  pintan igual.
+  el contenido no cambia — los porcentajes, la nota 4,7, las 36 reseñas y **el
+  nivel del cartucho** se pintan igual. El cartucho mide *cuánto llevas leído*:
+  eso es estado, no adorno, así que se actualiza también sin GSAP.
 - **Mapa**: `google.com/maps?q=…&output=embed`, sin API key, y **solo se monta
   al pulsar** (patrón `.map-consent`). Es lo que hace cierto el aviso de «sin
   cookies de terceros».
@@ -162,7 +174,7 @@ teclados de marca sobre fondo blanco, que el brief prohíbe expresamente.
 | `node scripts/contact_sheets.js "consulta"…` | hojas de contacto de Pexels para elegir foto |
 | `node scripts/generate_og.js` | imagen 1200×630 para compartir |
 | `node scripts/shots.js <url> <ancho> <etiqueta> <alto>` | capturas por sección |
-| `node scripts/verify.js <url>` | **la verificación**: 34 pruebas |
+| `node scripts/verify.js <url>` | **la verificación**: 39 pruebas |
 
 Los de Node necesitan `NODE_PATH=/c/Users/alvar/node_modules`.
 
@@ -173,14 +185,15 @@ python -m http.server 8247
 NODE_PATH=/c/Users/alvar/node_modules node scripts/verify.js http://127.0.0.1:8247/
 ```
 
-34/34 pruebas. Comprueba, entre otras: que los cuatro depósitos del hero
+39/39 pruebas. Comprueba, entre otras: que los cuatro depósitos del hero
 llegan a su nivel y el porcentaje coincide, que la «á» se rellena, que el
 botón del aviso de cookies **cierra**, que **no hay iframe de Google antes de
 pulsar** y sí después, que el barrido de tinta llega hasta la sexta tarjeta,
 que el eje de horas cae exactamente sobre la columna de las franjas, que
 **la pila pegajosa se suelta entera** —las seis tarjetas se pegan, miden lo
 mismo y ninguna asoma por detrás al salir—, que los
-contadores acaban en 4,7 y 36, que a 400 px siguen estando las cuatro barras y
+contadores acaban en 4,7 y 36, que **el cartucho del scroll marca el avance
+real de la página y lleva la tinta de la sección**, que a 400 px siguen estando las cuatro barras y
 no hay scroll horizontal, que con movimiento reducido los niveles salen llenos
 **sin perder ni un dato**, y que si el CDN de GSAP cae la marca y el teléfono
 siguen ahí.

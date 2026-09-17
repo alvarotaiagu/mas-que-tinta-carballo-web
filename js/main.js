@@ -24,6 +24,13 @@
   const $ = (sel, ctx) => (ctx || document).querySelector(sel);
   const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
   const rem = () => parseFloat(getComputedStyle(html).fontSize) || 16;
+
+  /* el cartucho del scroll y la pila de categorías comparten tinta: la pila
+     manda mientras estás dentro de ella, las demás secciones la declaran en
+     su atributo data-ink */
+  let aplicaTinta = function () {};
+  let tintaCats = "cian";
+  let enCats = false;
   const navH = () => parseFloat(getComputedStyle(html).getPropertyValue("--nav-h")) * rem() || 72;
 
   /* ---------- División en caracteres (accesible) ----------
@@ -143,9 +150,11 @@
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    if (fab && hero && "IntersectionObserver" in window) {
+    const cart = $(".cartucho");
+    if (hero && "IntersectionObserver" in window) {
       new IntersectionObserver(([e]) => {
-        fab.classList.toggle("is-visible", !e.isIntersecting);
+        if (fab) fab.classList.toggle("is-visible", !e.isIntersecting);
+        if (cart) cart.classList.toggle("is-visible", !e.isIntersecting);
       }, { threshold: 0.12 }).observe(hero);
     }
   })();
@@ -260,6 +269,71 @@
           onUpdate: () => { el.textContent = String(Math.round(obj.n)); }
         })
       });
+    });
+  }
+
+  /* ---------- Cartucho: el nivel de lectura de toda la página ----------
+     El nivel se actualiza SIEMPRE, también con movimiento reducido y sin
+     GSAP: es estado (cuánto llevas leído), no decoración. Lo que se cae sin
+     GSAP es solo el barrido al cambiar de tinta, que pasa a ser un corte.
+     Va con un rAF por evento de scroll, así que no hay trabajo por frame
+     cuando la página está quieta. */
+  function initCartucho() {
+    const cart = $(".cartucho");
+    if (!cart) return;
+    const cuerpo = $(".cartucho-cuerpo", cart);
+    const base = $('.cartucho-tinta[data-capa="base"]', cart);
+    const nueva = $('.cartucho-tinta[data-capa="nueva"]', cart);
+    const pct = $(".cartucho-pct", cart);
+    const VARS = { cian: "--cian", magenta: "--magenta", amarillo: "--amarillo", tinta: "--negro" };
+    const color = (n) => getComputedStyle(html).getPropertyValue(VARS[n] || "--negro").trim();
+
+    let actual = "";
+    aplicaTinta = function (nombre) {
+      if (!VARS[nombre] || nombre === actual) return;
+      actual = nombre;
+      const c = color(nombre);
+      if (!motion) { base.style.background = c; return; }
+      nueva.style.background = c;
+      gsap.fromTo(nueva, { clipPath: "inset(0 100% 0 0)" }, {
+        clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "power2.inOut",
+        onComplete: () => {
+          base.style.background = c;
+          gsap.set(nueva, { clipPath: "inset(0 100% 0 0)" });
+        }
+      });
+    };
+    aplicaTinta("cian");
+
+    let pedido = false;
+    function nivel() {
+      pedido = false;
+      const max = html.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      cuerpo.style.setProperty("--carga", p.toFixed(4));
+      pct.textContent = Math.round(p * 100) + "%";
+    }
+    window.addEventListener("scroll", () => {
+      if (!pedido) { pedido = true; requestAnimationFrame(nivel); }
+    }, { passive: true });
+    window.addEventListener("resize", nivel);
+    nivel();
+
+    /* la tinta de la sección que está cruzando la mitad de la pantalla */
+    if ("IntersectionObserver" in window) {
+      const obs = new IntersectionObserver((entradas) => {
+        entradas.forEach((e) => {
+          if (!e.isIntersecting) return;
+          enCats = e.target.classList.contains("cats");
+          aplicaTinta(enCats ? tintaCats : e.target.dataset.ink);
+        });
+      }, { rootMargin: "-45% 0px -50% 0px" });
+      $$("[data-ink]").forEach((sec) => obs.observe(sec));
+    }
+
+    cart.addEventListener("click", () => {
+      if (lenis) lenis.scrollTo(0, { duration: 1.1 });
+      else window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
     });
   }
 
@@ -386,8 +460,12 @@
     const cartas = $$(".cat");
     if (!capas.length || !cartas.length || !gsapReady) return;
 
+    /* la tinta que enseña el cartucho mientras cruzas la pila */
+    const TINTA_CARTA = ["cian", "magenta", "magenta", "tinta", "tinta", "amarillo"];
     const estado = capas.map(() => false);
     function pinta(hasta) {
+      tintaCats = TINTA_CARTA[hasta] || "cian";
+      if (enCats) aplicaTinta(tintaCats);
       capas.forEach((capa, i) => {
         const visible = i <= hasta;
         if (estado[i] === visible) return;
@@ -475,9 +553,10 @@
   }
 
   /* ---------- Lenis ---------- */
+  let lenis = null;
   function initLenis() {
     if (!motion || typeof Lenis === "undefined") return;
-    const lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 0.95 });
+    lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 0.95 });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
@@ -499,6 +578,7 @@
   function arranca() {
     igualaCartas();
     initLenis();
+    initCartucho();
     initHero();
     initTitulares();
     initNivelesSeccion();

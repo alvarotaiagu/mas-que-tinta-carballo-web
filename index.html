@@ -111,7 +111,7 @@
 <main>
 
 <!-- ============ HERO: panel de niveles ============ -->
-<section class="hero" id="inicio">
+<section class="hero" id="inicio" data-ink="cian">
   <div class="hero-in">
 
     <div class="hero-texto">
@@ -705,7 +705,7 @@
 </section>
 
 <!-- ============ LO QUE FALTA ============ -->
-<section class="pend-bloque" id="pendiente">
+<section class="pend-bloque" id="pendiente" data-ink="tinta">
   <header class="cab">
     <p class="etiqueta mono">CONTROL DE CALIDAD</p>
     <h2 class="titulo titulo-s" data-split-char>Lo que falta por confirmar</h2>
@@ -748,6 +748,21 @@
     <i style="background: var(--cian)"></i><i style="background: var(--magenta)"></i><i style="background: var(--amarillo)"></i><i style="background: var(--negro-2)"></i>
   </div>
 </footer>
+
+<!-- Indicador de scroll: un cartucho que se llena con lo que llevas leído
+     y que cambia a la tinta de la sección en la que estás. Pulsarlo sube
+     al principio. El porcentaje va en aria-hidden porque el botón ya dice
+     lo que hace; el nivel es decoración, no información que se pierda. -->
+<button class="cartucho" type="button" aria-label="Volver arriba">
+  <span class="cartucho-cuerpo">
+    <i class="cartucho-marcas"></i>
+    <i class="cartucho-tinta" data-capa="base"></i>
+    <i class="cartucho-tinta" data-capa="nueva"></i>
+    <i class="cartucho-menisco"></i>
+  </span>
+  <span class="cartucho-cabezal"></span>
+  <span class="cartucho-pct mono" aria-hidden="true">0%</span>
+</button>
 
 <a class="call-fab magnetico" href="tel:+34981702229" aria-label="Llamar a Más que Tinta">
   <span aria-hidden="true">✆</span>

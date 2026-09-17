@@ -223,8 +223,34 @@ const escalaX = (page, sel) => page.evaluate((s) => {
   }));
   ok('el contador termina en los datos reales 4,7 y 36', res.nota === '4,7' && res.n === '36', res);
 
+  /* --- cartucho del scroll ---
+     El nivel tiene que coincidir con el avance real de la página y la
+     tinta con la de la sección que estás cruzando. */
+  const cartucho = async () => page.evaluate(() => {
+    const c = document.querySelector('.cartucho');
+    const base = c.querySelector('[data-capa="base"]');
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    return {
+      real: Math.round((window.scrollY / max) * 100),
+      pct: parseInt(c.querySelector('.cartucho-pct').textContent, 10),
+      escala: Math.round(new DOMMatrixReadOnly(getComputedStyle(base).transform).d * 100),
+      tinta: getComputedStyle(base).backgroundColor,
+      visible: c.classList.contains('is-visible')
+    };
+  });
+  /* aquí el recorrido está en Reseñas, que es cian */
+  const cRes = await cartucho();
+  ok('el cartucho marca el avance real de la página',
+    Math.abs(cRes.pct - cRes.real) <= 1 && Math.abs(cRes.escala - cRes.real) <= 1, cRes);
+  ok('el cartucho lleva la tinta de la sección (cian en Reseñas)',
+    cRes.tinta === 'rgb(0, 169, 224)' && cRes.visible, { tinta: cRes.tinta });
+
   /* --- mapa bajo demanda --- */
   await rueda(page, await donde(page, '#contacto', 60));
+  const cCon = await cartucho();
+  ok('el cartucho cambia de tinta al entrar en Contacto (magenta)',
+    cCon.tinta === 'rgb(229, 0, 125)' && cCon.pct > cRes.pct, { tinta: cCon.tinta, pct: cCon.pct });
+
   ok('NO hay iframe de Google antes de pedirlo', (await page.$$('iframe')).length === 0);
   await page.click('.map-consent');
   await page.waitForTimeout(2500);
@@ -289,6 +315,18 @@ const escalaX = (page, sel) => page.evaluate((s) => {
     rm.capas.every(puesta), rm.capas);
   ok('con movimiento reducido el contenido no se pierde (4,7 y 36)',
     rm.nota === '4,7' && rm.resenas === '36', { nota: rm.nota, resenas: rm.resenas });
+  await pr.evaluate(() => window.scrollTo(0, Math.round((document.documentElement.scrollHeight - innerHeight) * 0.6)));
+  await pr.waitForTimeout(500);
+  const crm = await pr.evaluate(() => {
+    const c = document.querySelector('.cartucho');
+    const max = document.documentElement.scrollHeight - innerHeight;
+    return { real: Math.round(window.scrollY / max * 100),
+             pct: parseInt(c.querySelector('.cartucho-pct').textContent, 10),
+             escala: Math.round(new DOMMatrixReadOnly(getComputedStyle(c.querySelector('[data-capa="base"]')).transform).d * 100) };
+  });
+  ok('con movimiento reducido el cartucho SIGUE midiendo el avance',
+    Math.abs(crm.pct - crm.real) <= 1 && Math.abs(crm.escala - crm.real) <= 1, crm);
+
   ok('con movimiento reducido las franjas del horario estan pintadas',
     rm.franjas.length === 12 && rm.franjas.every((f) => f === 100));
   await pr.screenshot({ path: path.join(SHOTS, 'v-reduced.png'), fullPage: false });
@@ -300,13 +338,18 @@ const escalaX = (page, sel) => page.evaluate((s) => {
   await ps.route('**/lenis*/**', (r) => r.abort());
   await ps.goto(URL, { waitUntil: 'domcontentloaded' });
   await ps.waitForTimeout(2600);
+  await ps.evaluate(() => window.scrollTo(0, Math.round((document.documentElement.scrollHeight - innerHeight) * 0.5)));
+  await ps.waitForTimeout(400);
   const sin = await ps.evaluate(() => ({
     marca: !!document.querySelector('.hero-marca') && getComputedStyle(document.querySelector('.hero-marca')).opacity,
     tel: document.querySelector('a[href^="tel:"]').getAttribute('href'),
-    tanque: Math.round(new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.tanque-tinta')).transform).d * 100)
+    tanque: Math.round(new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.tanque-tinta')).transform).d * 100),
+    cartucho: parseInt(document.querySelector('.cartucho-pct').textContent, 10)
   }));
   ok('si el CDN falla la marca y el telefono siguen visibles',
     sin.marca === '1' && sin.tel === 'tel:+34981702229' && sin.tanque === 100, sin);
+  ok('si el CDN falla el cartucho sigue midiendo el avance',
+    Math.abs(sin.cartucho - 50) <= 2, { cartucho: sin.cartucho });
   await ps.screenshot({ path: path.join(SHOTS, 'v-sin-gsap.png') });
 
   ok('sin errores de consola', informe.consola.length === 0, informe.consola.slice(0, 6));

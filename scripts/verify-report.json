@@ -178,6 +178,32 @@
       }
     },
     {
+      "prueba": "el cartucho marca el avance real de la página",
+      "ok": true,
+      "extra": {
+        "real": 86,
+        "pct": 86,
+        "escala": 86,
+        "tinta": "rgb(0, 169, 224)",
+        "visible": true
+      }
+    },
+    {
+      "prueba": "el cartucho lleva la tinta de la sección (cian en Reseñas)",
+      "ok": true,
+      "extra": {
+        "tinta": "rgb(0, 169, 224)"
+      }
+    },
+    {
+      "prueba": "el cartucho cambia de tinta al entrar en Contacto (magenta)",
+      "ok": true,
+      "extra": {
+        "tinta": "rgb(229, 0, 125)",
+        "pct": 92
+      }
+    },
+    {
       "prueba": "NO hay iframe de Google antes de pedirlo",
       "ok": true,
       "extra": null
@@ -297,6 +323,15 @@
       }
     },
     {
+      "prueba": "con movimiento reducido el cartucho SIGUE midiendo el avance",
+      "ok": true,
+      "extra": {
+        "real": 60,
+        "pct": 60,
+        "escala": 60
+      }
+    },
+    {
       "prueba": "con movimiento reducido las franjas del horario estan pintadas",
       "ok": true,
       "extra": null
@@ -307,7 +342,15 @@
       "extra": {
         "marca": "1",
         "tel": "tel:+34981702229",
-        "tanque": 100
+        "tanque": 100,
+        "cartucho": 50
+      }
+    },
+    {
+      "prueba": "si el CDN falla el cartucho sigue midiendo el avance",
+      "ok": true,
+      "extra": {
+        "cartucho": 50
       }
     },
     {

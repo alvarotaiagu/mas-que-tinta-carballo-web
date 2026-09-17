@@ -179,6 +179,63 @@ a:hover { text-decoration-color: currentColor; }
 .btn-linea:hover { background: var(--negro); color: var(--papel); }
 .btn-tel { font-size: 0.78rem; opacity: 0.72; }
 
+/* ---------- Cartucho: el nivel de lectura de toda la página ----------
+   Mismo gesto que el resto de la web: un depósito que se llena de abajo
+   arriba con transform: scaleY. La tinta es la de la sección en la que
+   estás, y el cambio entra con el mismo barrido de cabezal que la pila
+   de categorías. */
+.cartucho {
+  position: fixed; left: 1rem; bottom: 1rem; z-index: 140;
+  display: flex; flex-direction: column; align-items: center;
+  /* placa de papel: el cartucho pasa por encima de secciones cian,
+     magenta, amarilla y negra, y sin ella el porcentaje en gris no se lee */
+  padding: 0.4rem 0.45rem 0.3rem;
+  background: rgba(251, 250, 247, 0.97);
+  border-radius: 5px;
+  box-shadow: 0 6px 20px rgba(17, 17, 17, 0.2);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.cartucho.is-visible { opacity: 1; pointer-events: auto; }
+.cartucho:hover { transform: translateY(-3px); }
+.cartucho-cuerpo {
+  position: relative; display: block;
+  width: 2.4rem; height: 2.9rem;
+  border: 2px solid var(--negro); border-radius: 3px 3px 1px 1px;
+  background: var(--papel); overflow: hidden;
+}
+.cartucho-tinta {
+  position: absolute; inset: 0; display: block;
+  background: var(--cian);
+  transform: scaleY(var(--carga, 0)); transform-origin: bottom;
+}
+.cartucho-tinta[data-capa="nueva"] { clip-path: inset(0 100% 0 0); }
+/* Las rayas de nivel van DEBAJO de la tinta, no encima: así se ven sobre
+   el papel del hueco vacío y la tinta las tapa según sube. Encima no
+   valían: con la tinta negra al 80 % desaparecían y el cartucho se
+   quedaba en un rectángulo sin nivel. */
+.cartucho-marcas {
+  position: absolute; inset: 0; display: block;
+  background-image: repeating-linear-gradient(to bottom,
+    transparent 0 9px, rgba(17, 17, 17, 0.16) 9px 10px);
+}
+/* la superficie de la tinta: una línea nítida que no depende del color.
+   --carga es un número sin unidad, así que multiplica dentro del calc. */
+.cartucho-menisco {
+  position: absolute; left: 0; right: 0; display: block;
+  height: 2px; margin-top: -1px; background: var(--negro);
+  top: calc(100% - var(--carga, 0) * 100%);
+  opacity: var(--carga, 0);
+}
+.cartucho-cabezal {
+  display: block; width: 1.05rem; height: 0.4rem;
+  background: var(--negro); border-radius: 0 0 2px 2px;
+}
+.cartucho-pct {
+  display: block; margin-top: 0.35rem;
+  font-size: 0.55rem; letter-spacing: 0.06em; color: var(--gris);
+}
+
 .call-fab {
   position: fixed; right: 1rem; bottom: 1rem; z-index: 140;
   width: 3.4rem; height: 3.4rem; border-radius: 50%;
@@ -884,6 +941,10 @@ html.has-motion .hor-franja { transform: scaleX(0); }
   .cat-ul li { font-size: 0.74rem; }
   .pend-lista li { grid-template-columns: 2rem 1fr; gap: 0.5rem; font-size: 0.86rem; }
   .call-fab { width: 3rem; height: 3rem; }
+  .cartucho { left: 0.7rem; bottom: 0.7rem; }
+  .cartucho-cuerpo { width: 1.9rem; height: 2.3rem; }
+  .cartucho-cabezal { width: 0.85rem; height: 0.34rem; }
+  .cartucho-pct { font-size: 0.5rem; margin-top: 0.25rem; }
 }
 
 /* ============================================================
@@ -893,5 +954,8 @@ html.has-motion .hor-franja { transform: scaleX(0); }
 @media (prefers-reduced-motion: reduce) {
   .marquesina-cinta { animation: none; }
   .ficha { transition: none; }
+  /* el cartucho SIGUE marcando el nivel de lectura: eso es estado, no
+     adorno. Lo que se quita es el desplazamiento al pasar por encima. */
+  .cartucho:hover { transform: none; }
   * { scroll-behavior: auto !important; }
 }
